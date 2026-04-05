@@ -1,16 +1,9 @@
 import { Router } from 'express';
-import db from '../db.js';
-import { authMiddleware } from '../auth.js';
+import db from '../database/connection.js';
+import { authMiddleware } from '../middlewares/auth.js';
+import { isDev, isMember } from '../helpers/world.js';
 
 const router = Router();
-
-function isDev(worldId, userId) {
-  return db.prepare("SELECT id FROM world_members WHERE world_id = ? AND user_id = ? AND role = 'dev' AND status = 'approved'").get(worldId, userId);
-}
-
-function isMember(worldId, userId) {
-  return db.prepare("SELECT * FROM world_members WHERE world_id = ? AND user_id = ? AND status = 'approved'").get(worldId, userId);
-}
 
 // Get events for a world (lore/timeline)
 router.get('/world/:worldId', (req, res) => {

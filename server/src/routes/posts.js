@@ -1,16 +1,9 @@
 import { Router } from 'express';
-import db from '../db.js';
-import { authMiddleware, optionalAuth } from '../auth.js';
+import db from '../database/connection.js';
+import { authMiddleware, optionalAuth } from '../middlewares/auth.js';
+import { isDev, addCredits } from '../helpers/world.js';
 
 const router = Router();
-
-function isDev(worldId, userId) {
-  return db.prepare("SELECT id FROM world_members WHERE world_id = ? AND user_id = ? AND role = 'dev' AND status = 'approved'").get(worldId, userId);
-}
-
-function addCredits(worldId, userId, amount) {
-  db.prepare('UPDATE world_members SET credits = credits + ? WHERE world_id = ? AND user_id = ?').run(amount, worldId, userId);
-}
 
 // Get posts for an event
 router.get('/event/:eventId', optionalAuth, (req, res) => {
